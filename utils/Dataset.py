@@ -14,7 +14,7 @@ transform_test =  transforms.Compose([
 
 def getTrainset(BATCH_SIZE_TRAIN, NOM_WORKERS_TRAIN, PIN_MEMORY=False):
     trainset = torchvision.datasets.CIFAR10(
-        root='./data',
+        root='../Data',
         train=True,
         download=True,
         transform=transform_train
@@ -30,7 +30,7 @@ def getTrainset(BATCH_SIZE_TRAIN, NOM_WORKERS_TRAIN, PIN_MEMORY=False):
 
 def getTestset(BATCH_SIZE_TEST, NOM_WORKERS_TEST, PIN_MEMORY=False):
     testset = torchvision.datasets.CIFAR10(
-        root='./data',
+        root='../Data',
         train=False,
         download=True,
         transform=transform_test

@@ -1,4 +1,4 @@
-from Network import ResNet18
+from utils.Network import ResNet18
 import torch
 
 def getModel():

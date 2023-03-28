@@ -3,8 +3,12 @@ import json
 import sys
 import tqdm
 import os
+import sys
+
 import torch.optim as optim
 import torch.nn as nn
+
+sys.path.insert(1, '../')
 
 from utils.Dataset import getTrainset, getTestset
 from utils.Attack import fgsm_attack
@@ -16,7 +20,7 @@ NOM_WORKERS_TRAIN = CONFIG["NOM_WORKERS_TRAIN"]
 NOM_WORKERS_TEST = CONFIG["NOM_WORKERS_TEST"]
 
 NAME = CONFIG["NAME"] + "_MaxEpoch_" + str(CONFIG["EPOCHS"]) + "_BatchSize_" + str(CONFIG["BATCH_SIZE_TRAIN"])
-SAVE_PATH = "./Models/" + NAME
+SAVE_PATH = "../Models/" + NAME
 
 if not os.path.exists(SAVE_PATH):
     os.makedirs(SAVE_PATH)
