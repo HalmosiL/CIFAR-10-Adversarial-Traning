@@ -1,4 +1,8 @@
 import torch
+import json
+import sys
+import tqdm
+import os
 import torch.optim as optim
 import torch.nn as nn
 
@@ -6,35 +10,33 @@ from Dataset import getTrainset, getTestset
 from Attack import fgsm_attack
 from Model import getModel
 
-#CONFIGS 
-DEVICE = "cuda:0"
+CONFIG = json.load(open(sys.argv[1]))
 
-BATCH_SIZE_TEST = 256
-BATCH_SIZE_TRAIN = 256
+NOM_WORKERS_TRAIN = CONFIG["NOM_WORKERS_TRAIN"]
+NOM_WORKERS_TEST = CONFIG["NOM_WORKERS_TEST"]
 
-EPOCHS = 50
+NAME = CONFIG["NAME"] + "_MaxEpoch_" + str(CONFIG["EPOCHS"]) + "_BatchSize_" + str(CONFIG["BATCH_SIZE_TRAIN"])
+SAVE_PATH = "./Models/" + NAME
 
-NOM_WORKERS_TRAIN = 8
-NOM_WORKERS_TEST = 8
+if not os.path.exists(SAVE_PATH):
+    os.makedirs(SAVE_PATH)
 
-model = getModel().to(DEVICE)
+model = getModel().to(CONFIG["DEVICE"])
 
-trainloader = getTrainset(BATCH_SIZE_TEST, NOM_WORKERS_TRAIN, PIN_MEMORY=True)
-testloader = getTestset(BATCH_SIZE_TEST, NOM_WORKERS_TEST, PIN_MEMORY=True)
+trainloader = getTrainset(CONFIG["BATCH_SIZE_TRAIN"], NOM_WORKERS_TRAIN, PIN_MEMORY=True)
+testloader = getTestset(CONFIG["BATCH_SIZE_TEST"], NOM_WORKERS_TEST, PIN_MEMORY=True)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 
-TRAIN_LEN = EPOCHS * len(trainloader)
-
-for epoch in range(EPOCHS):
+for epoch in tqdm.tqdm(range(CONFIG["EPOCHS"])):
     running_loss = 0.0
 
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
 
-        inputs = inputs.to(DEVICE)
-        labels = labels.to(DEVICE)
+        inputs = inputs.to(CONFIG["DEVICE"])
+        labels = labels.to(CONFIG["DEVICE"])
 
         optimizer.zero_grad()
 
@@ -42,18 +44,14 @@ for epoch in range(EPOCHS):
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-
-        running_loss += loss.item()
-
-        if i % 100 == 0 and i != 0:
-            fin = str((epoch * len(trainloader) + i) / TRAIN_LEN * 100)[:5]
-            print(f'EPOCH: [{epoch + 1}] loss: {running_loss / 100:.3f} Finished: {fin}%')
-            running_loss = 0.0
+    
+    if(epoch % CONFIG["ModelSavePeriod"] == 0):
+        torch.save(model.state_dict(), SAVE_PATH + f"/model_{epoch}.pt")
 
 print('Finished Training')
 print('Save model:')
 
-torch.save(model.state_dict(), "./Models/model.pt")
+torch.save(model.state_dict(), SAVE_PATH + "/model_fin.pt")
 
 correct = 0
 total = 0
@@ -64,8 +62,8 @@ with torch.no_grad():
     for data in testloader:
         images, labels = data
 
-        images = images.to(DEVICE)
-        labels = labels.to(DEVICE)
+        images = images.to(CONFIG["DEVICE"])
+        labels = labels.to(CONFIG["DEVICE"])
 
         outputs = model(images)
 

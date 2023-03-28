@@ -1,6 +1,8 @@
 import torch
+import tqdm
 import torch.optim as optim
 import torch.nn as nn
+import tqdm
 
 from Dataset import getTrainset, getTestset
 from Model import getModel
@@ -10,14 +12,12 @@ from Attack import fgsm_attack
 
 #CONFIGS 
 DEVICE = "cuda:0"
-
 BATCH_SIZE_TEST = 256
 BATCH_SIZE_TRAIN = 256
-
 EPOCHS = 50
-
 NOM_WORKERS_TRAIN = 8
 NOM_WORKERS_TEST = 8
+ATTACK_NAME = "FGSM"
 
 model = getModel().to(DEVICE)
 
@@ -29,7 +29,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.01)
 
 TRAIN_LEN = EPOCHS * len(trainloader)
 
-for epoch in range(EPOCHS):
+for epoch in tqdm.tqdm(range(EPOCHS)):
     running_loss = 0.0
 
     for i, data in enumerate(trainloader, 0):
@@ -38,13 +38,14 @@ for epoch in range(EPOCHS):
         inputs = inputs.to(DEVICE)
         labels = labels.to(DEVICE)
 
-        inputs = FGSM(
-            inputs,
-            labels,
-            model,
-            8/255,
-            criterion
-        )
+        if(ATTACK_NAME == "FGSM"):
+            inputs = FGSM(
+                inputs,
+                labels,
+                model,
+                8/255,
+                criterion
+            )
 
         optimizer.zero_grad()
 
