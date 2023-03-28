@@ -1,10 +1,10 @@
 {
     "NAME": "normal",
     "DEVICE": "cuda:0",
-    "NOM_WORKERS_TEST": 8,
-    "NOM_WORKERS_TRAIN": 8,
-    "BATCH_SIZE_TRAIN": 32,
-    "BATCH_SIZE_TEST": 32,
+    "NOM_WORKERS_TEST": 16,
+    "NOM_WORKERS_TRAIN": 16,
+    "BATCH_SIZE_TRAIN": 256,
+    "BATCH_SIZE_TEST": 256,
     "EPOCHS": 4,
     "ModelSavePeriod": 1
 }
