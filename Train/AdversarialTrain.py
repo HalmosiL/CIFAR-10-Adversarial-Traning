@@ -7,8 +7,6 @@ from Dataset import getTrainset, getTestset
 from Model import getModel
 from Attack import FGSM
 
-from Attack import fgsm_attack
-
 #CONFIGS 
 DEVICE = "cuda:0"
 BATCH_SIZE_TEST = 256
