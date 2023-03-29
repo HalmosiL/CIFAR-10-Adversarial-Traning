@@ -1,11 +1,11 @@
-from utils.Network import ResNet18
+from utils.Network import ResNet
 import torch
 
 def getModel():
-    return ResNet18()
+    return ResNet()
 
 def loadModel(PATH):
-    model = ResNet18()
+    model = ResNet()
     model.load_state_dict(torch.load(PATH))
     model.eval()
 

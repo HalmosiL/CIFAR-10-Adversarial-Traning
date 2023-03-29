@@ -4,9 +4,9 @@ import torch
 import torchvision.transforms as transforms
 import torchvision
 
-class ResNet18(nn.Module):
+class ResNet(nn.Module):
     def __init__(self, num_classes=10):
-        super(ResNet18, self).__init__()
+        super(ResNet, self).__init__()
         self.transform = transforms.Compose([transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         self.resnet = torchvision.models.resnet18(pretrained=False)
         self.resnet.fc = nn.Linear(512, num_classes)
