@@ -13,7 +13,6 @@ import torch.nn as nn
 sys.path.insert(1, '../')
 
 from utils.Dataset import getTrainset, getTestset
-from utils.Attack import fgsm_attack
 from utils.Model import getModel
 
 def Train(model, optimizer, trainloader, criterion, scheduler):
@@ -79,16 +78,13 @@ def Test(model, testloader, criterion):
     print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
 
 def schale(epoch):
-    if(epoch <= 50):
+    if(epoch <= 100):
         return 1
     
-    if(epoch <= 100):
+    if(epoch <= 150):
         return 0.1
 
-    if(epoch <= 150):
-        return 0.01
-
-    return 0.001
+    return 0.01
 
 CONFIG = json.load(open(sys.argv[1]))
 
