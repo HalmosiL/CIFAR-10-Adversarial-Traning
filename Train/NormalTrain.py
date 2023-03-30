@@ -15,8 +15,6 @@ sys.path.insert(1, '../')
 from utils.Dataset import getTrainset, getTestset
 from utils.Model import getModel
 
-os.environ["WANDB_RUN_GROUP"] = "Normal"
-
 def Train(model, optimizer, trainloader, criterion, scheduler, step):
     model = model.train()
 
