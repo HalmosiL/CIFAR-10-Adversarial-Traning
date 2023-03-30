@@ -15,6 +15,8 @@ sys.path.insert(1, '../')
 from utils.Dataset import getTrainset, getTestset
 from utils.Model import getModel
 
+os.environ["WANDB_RUN_GROUP"] = "Normal"
+
 def Train(model, optimizer, trainloader, criterion, scheduler, step):
     model = model.train()
 
@@ -97,6 +99,7 @@ SAVE_PATH = "../Models/" + NAME
 wandb.init(
     project="CIFAR-10-Adversarial-Traning",
     group="Normal",
+    job_type="Train",
     config={
     "learning_rate": 0.1,
     "architecture": "RESNET18",

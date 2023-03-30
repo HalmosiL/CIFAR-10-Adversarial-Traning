@@ -16,6 +16,8 @@ from utils.Dataset import getTrainset, getTestset
 from utils.Attack import PGD
 from utils.Model import getModel
 
+os.environ["WANDB_RUN_GROUP"] = "Adversarial-Train"
+
 def Train(model, optimizer, trainloader, criterion, scheduler, step):
     model = model.train()
 
@@ -127,7 +129,8 @@ SAVE_PATH = "../Models/" + NAME
 
 wandb.init(
     project="CIFAR-10-Adversarial-Traning",
-
+    group="Adversarial-Train",
+    job_type="Train-pgd-10",
     config={
     "learning_rate": 0.1,
     "architecture": "RESNET18",
