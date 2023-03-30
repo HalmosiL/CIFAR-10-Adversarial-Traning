@@ -76,7 +76,6 @@ def TestAdversarial(model, testloader, criterion):
         correct += (predicted == labels).sum().item()
 
     loss = loss / testloader.__len__()
-
     wandb.log({"val_acc_adversarial": 100 * correct / total, "val_loss_adversarial": loss})
 
     print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
@@ -106,7 +105,6 @@ def Test(model, testloader, criterion):
         loss = loss / testloader.__len__()
 
     wandb.log({"val_acc": 100 * correct / total, "val_loss": loss})
-
     print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
 
 
