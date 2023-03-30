@@ -16,7 +16,7 @@ from utils.Dataset import getTrainset, getTestset
 from utils.Attack import PGD
 from utils.Model import getModel
 
-def Train(model, optimizer, trainloader, criterion, scheduler):
+def Train(model, optimizer, trainloader, criterion, scheduler, step):
     model = model.train()
 
     correct = 0
@@ -48,11 +48,11 @@ def Train(model, optimizer, trainloader, criterion, scheduler):
     if scheduler is not None:
         scheduler.step()
 
-    wandb.log({"train_acc_adversarial": 100 * correct / total, "train_loss_adversarial": loss_log})
+    wandb.log({"train_acc_adversarial": 100 * correct / total, "train_loss_adversarial": loss_log}, step=step)
 
     return model
 
-def TestAdversarial(model, testloader, criterion):
+def TestAdversarial(model, testloader, criterion, step):
     correct = 0
     total = 0
     loss = 0
@@ -76,11 +76,11 @@ def TestAdversarial(model, testloader, criterion):
         correct += (predicted == labels).sum().item()
 
     loss = loss / testloader.__len__()
-    wandb.log({"val_acc_adversarial": 100 * correct / total, "val_loss_adversarial": loss})
+    wandb.log({"val_acc_adversarial": 100 * correct / total, "val_loss_adversarial": loss}, step=step)
 
     print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
 
-def Test(model, testloader, criterion):
+def Test(model, testloader, criterion, step):
     correct = 0
     total = 0
     loss = 0
@@ -104,7 +104,7 @@ def Test(model, testloader, criterion):
 
         loss = loss / testloader.__len__()
 
-    wandb.log({"val_acc": 100 * correct / total, "val_loss": loss})
+    wandb.log({"val_acc": 100 * correct / total, "val_loss": loss}, step=step)
     print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
 
 
@@ -152,11 +152,11 @@ optimizer = optim.SGD(model.parameters(), lr=0.1, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=[schale])
 
 for epoch in tqdm.tqdm(range(CONFIG["EPOCHS"])):
-    model = Train(model, optimizer, trainloader, criterion, scheduler)
+    model = Train(model, optimizer, trainloader, criterion, scheduler, epoch + 1)
     
     if(epoch % CONFIG["ModelSavePeriod"] == 0):
-        TestAdversarial(model, testloader, criterion)
-        Test(model, testloader, criterion)
+        TestAdversarial(model, testloader, criterion, epoch + 1)
+        Test(model, testloader, criterion, epoch + 1)
     
     if(epoch % CONFIG["ModelSavePeriod"] == 0):
         torch.save(model.state_dict(), SAVE_PATH + f"/model_{epoch}.pt")
