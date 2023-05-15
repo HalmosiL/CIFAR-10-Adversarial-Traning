@@ -20,6 +20,15 @@ def PGD(inputs, labels, model, epsilon=8/255, stepSize=2/255, lossFun=nn.CrossEn
 
     for _ in range(iterationNumber):
         adv_inputs = pgd_attack(adv_inputs, epsilon, data_grad)
+        adv_inputs = inputs.clone().detach().requires_grad_(True)
+
+        outputs = model(adv_inputs)
+
+        loss = lossFun(outputs, labels)
+        loss.backward()
+
+        data_grad = adv_inputs.grad.data
+        model.zero_grad()
 
         eta = torch.clamp(adv_inputs - inputs, min=-epsilon, max=epsilon)
         adv_inputs = torch.clamp(inputs.clone() + eta, min=0, max=1).detach().requires_grad_(True)

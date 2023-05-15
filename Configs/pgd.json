@@ -1,10 +1,11 @@
 {
-    "NAME": "RESNET-18",
+    "NAME": "RESNET-18-0.1",
     "DEVICE": "cuda:0",
-    "NOM_WORKERS_TEST": 24,
-    "NOM_WORKERS_TRAIN": 24,
+    "NOM_WORKERS_TEST": 12,
+    "NOM_WORKERS_TRAIN": 12,
     "BATCH_SIZE_TRAIN": 128,
     "BATCH_SIZE_TEST": 128,
+    "AttackIterationNumber": 10,
     "EPOCHS": 200,
     "ModelSavePeriod": 1
 }

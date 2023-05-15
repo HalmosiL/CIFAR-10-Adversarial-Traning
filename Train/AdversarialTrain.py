@@ -16,6 +16,8 @@ from utils.Dataset import getTrainset, getTestset
 from utils.Attack import PGD
 from utils.Model import getModel
 
+os.environ["WANDB_RUN_GROUP"] = "Standard-Adversarial-Train"
+
 def Train(model, optimizer, trainloader, criterion, scheduler, step):
     model = model.train()
 
@@ -65,7 +67,7 @@ def TestAdversarial(model, testloader, criterion, step):
         images = images.to(CONFIG["DEVICE"])
         labels = labels.to(CONFIG["DEVICE"])
 
-        images = PGD(images, labels, model)
+        images = PGD(images, labels, model, CONFIG["AttackIterationNumber"])
 
         outputs = model(images)
 
@@ -127,7 +129,7 @@ SAVE_PATH = "../Models/" + NAME
 
 wandb.init(
     project="CIFAR-10-Adversarial-Traning",
-    group="Adversarial-Train",
+    group="Standard-Adversarial-Train",
     job_type="Train-pgd-10",
     config={
     "learning_rate": 0.1,
